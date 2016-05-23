@@ -1,32 +1,23 @@
 #include"smart_object.h"
 #include"garbage_collector.h"
 #include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstdlib>
 
 SmartObject::SmartObject()
 {
-	std::vector<GarbageCollector::Element> ptr = GarbageCollector::pointers();
-	size_t i = 0;
-	while(i < ptr.size())
-	{
-		if (this == ptr[i].ptr)
-		{
-			break;
-		}
-		++i;
-	}
-	if (i == ptr.size())
+	if (GarbageCollector::Instance()->heapObject_.count(GarbageCollector::Element{ false, this }) == 0)
 	{
 		this->size_ = 0;
-		std::cout << "Stack obj!!!" << std::endl;
 	}
-	std::cout << "SmartObj const " << this->size_ << std::endl;
 
-	GarbageCollector::Instance()->registration(this, 1);
+    GarbageCollector::registration(this, true);
 }
 
 void * SmartObject::operator new(size_t size)
 {
-	std::cout << "Operator New " << size << std::endl;
+    //std::cout << "SMO new " << size << std::endl;
 	size_t curentMemory = GarbageCollector::memoryUse();
 	size_t maxMemory = GarbageCollector::maxMemory();
 	if (curentMemory + size > maxMemory)
@@ -35,24 +26,22 @@ void * SmartObject::operator new(size_t size)
 		curentMemory = GarbageCollector::memoryUse();
 		if (curentMemory + size > maxMemory)
 		{
-			throw std::bad_alloc();
-			return nullptr;
+            throw(std::bad_alloc());
 		}
 	}
 	SmartObject* obj = static_cast<SmartObject *>(malloc(size));
 	obj->size_ = size;
-	GarbageCollector::Instance()->registration(obj, false);
+    GarbageCollector::registration(obj, false);
 	return obj;
 }
 
 void SmartObject::operator delete(void* obj)
 {
-	std::cout << "SmartObj delete " << ((SmartObject*)obj)->size_ << std::endl;
+    //std::cout << "SMO delete " << ((SmartObject*)obj)->size_ << std::endl;
 	free(obj);
 }
 
 SmartObject::~SmartObject()
 {
-	std::cout << "SmartObj destruct " << this->size_ << std::endl;
-	GarbageCollector::Instance()->deRegistration(this);
+    GarbageCollector::deRegistration(this);
 }

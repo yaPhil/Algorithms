@@ -1,6 +1,8 @@
 #pragma once
 #include<vector>
 
+using std::size_t;
+
 class SmartObject
 {
 	friend class GarbageCollector;
@@ -10,7 +12,7 @@ public:
 	virtual std::vector<SmartObject*> pointers() const = 0;
 	void* operator new(size_t size);
 	void operator delete(void* obj);
-	~SmartObject();
+    virtual ~SmartObject();
 private:
 	size_t size_;
 };

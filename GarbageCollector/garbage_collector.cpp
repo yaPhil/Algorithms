@@ -4,29 +4,29 @@
 
 GarbageCollector* GarbageCollector::Instance(size_t m)
 {
-	if (!self_)
+    if (self_ == nullptr)
 	{
 		self_ = new GarbageCollector();
 		self_->memory_ = 0;
 		self_->maxMemory_ = m;
+        self_->isCollect_ = false;
+        std::cout << "Garbage collector initialized" << std::endl << "Total heap memory is " << m << " bytes" << std::endl;
 	}
 	return self_;
 }
 
 bool GarbageCollector::DeleteInstance()
 {
-	if (self_)
+    std::cout << "Deleting Garbage Collector" << std::endl;
+    if (self_ != nullptr)
 	{
-		size_t i = 0;
-		while (i < self_->pointers_.size())
+		for(auto i = self_->heapObject_.begin(); i != self_->heapObject_.end(); ++i)
 		{
-			if (self_->pointers_[i].type == false)
-				delete self_->pointers_[i].ptr;
-			else
-				++i;
+			delete i->ptr;
 		}
+		std::cout << "Heap clear" << std::endl;
+        /*std::cout << "Garbage collector is free!!" << std::endl;*/
 		delete self_;
-		self_ = 0;
 		return true;
 	}
 	return false;
@@ -34,51 +34,49 @@ bool GarbageCollector::DeleteInstance()
 
 void GarbageCollector::registration(SmartObject* obj, bool place)
 {
-	for (size_t i = 0; i < self_->pointers_.size(); ++i)
-	{
-		if (self_->pointers_[i].ptr == obj)
-			return;
-	}
-	std::cout << "registration " << obj->size_ << std::endl;
-	self_->pointers_.push_back(GarbageCollector::Element{ place, false, obj });
+	if (self_->heapObject_.count(Element{ false, obj }) || self_->stackObject_.count(Element{ false, obj }))
+		return;
+	if (place == true)
+		self_->stackObject_.insert(Element{ false, obj });
+	else
+		self_->heapObject_.insert(Element{ false, obj });
 	self_->memory_ += obj->size_;
 }
 
 void GarbageCollector::deRegistration(SmartObject* obj)
 {
-	for (size_t i = 0; i < self_->pointers_.size(); ++i)
+	if (self_->heapObject_.count(Element{ false, obj }))
 	{
-		if (self_->pointers_[i].ptr == obj)
-		{
-			std::cout << "deRegistration " << self_->pointers_[i].ptr->size_ << std::endl;
-			self_->memory_ -= self_->pointers_[i].ptr->size_;
-			self_->pointers_.erase(self_->pointers_.begin() + i);
-			break;
-		}
+			self_->memory_ -= obj->size_;
+			self_->heapObject_.erase(Element{ false, obj });
+			return;
+	}
+	if (self_->stackObject_.count(Element{ false, obj }))
+	{
+		self_->memory_ -= obj->size_;
+		self_->stackObject_.erase(Element{ false, obj });
+		return;
 	}
 }
 
 void GarbageCollector::collect()
 {
-	std::cout << "collect" << std::endl;
-	for (size_t i = 0; i < self_->pointers_.size(); ++i)
+    GarbageCollector::isCollect_ = true;
+	for (auto i = self_->stackObject_.begin(); i != self_->stackObject_.end(); ++i)
 	{
-		if (self_->pointers_[i].type == true)
-		{
-			dfs(self_->pointers_[i].ptr);
-		}
+		dfs(i->ptr);
 	}
-	size_t i = 0;
-	while (i < self_->pointers_.size())
+	for(auto i = self_->heapObject_.begin(); i != self_->heapObject_.end(); ++i)
 	{
-		if (self_->pointers_[i].color == false)
+		if (i->color == false)
 		{
-			delete self_->pointers_[i].ptr;
+			delete i->ptr;
 		}
 		else
 		{
-			self_->pointers_[i].color = false;
-			++i;
+			Element tmp{ false, i->ptr };
+			self_->heapObject_.erase(i);
+			self_->heapObject_.insert(tmp);
 		}
 	}
 }
@@ -93,28 +91,28 @@ size_t GarbageCollector::maxMemory()
 	return self_->maxMemory_;
 }
 
-const std::vector<GarbageCollector::Element>& GarbageCollector::pointers()
-{
-	return self_->pointers_;
-}
-
 void GarbageCollector::dfs(SmartObject* v)
 {
 	std::vector<SmartObject*> sons = v->pointers();
-	for (size_t i = 0; i < self_->pointers_.size(); ++i)
+	if (self_->stackObject_.count(Element{ true, v }) || self_->heapObject_.count(Element{ true, v }))
+		return;
+	if (self_->stackObject_.count(Element{ false, v }))
 	{
-		if (self_->pointers_[i].ptr == v)
-		{
-			if (self_->pointers_[i].color)
-				return;
-			self_->pointers_[i].color = true;
-			break;
-		}
+		self_->stackObject_.erase(Element{ false, v });
+		self_->stackObject_.insert(Element{ true, v });
 	}
+
+	if (self_->heapObject_.count(Element{ false, v }))
+	{
+		self_->heapObject_.erase(Element{ false, v });
+		self_->heapObject_.insert(Element{ true, v });
+	}
+	
 	for (size_t i = 0; i < sons.size(); ++i)
 	{
 		dfs(sons[i]);
 	}
 }
 
-GarbageCollector* GarbageCollector::self_ = 0;
+GarbageCollector* GarbageCollector::self_ = nullptr;
+bool GarbageCollector::isCollect_ = false;
