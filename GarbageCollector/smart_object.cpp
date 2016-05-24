@@ -11,6 +11,7 @@ SmartObject::SmartObject()
 	{
 		this->size_ = 0;
 	}
+    //std::cout << "Smart Obj const " << this->size_ << std::endl;
 
     GarbageCollector::registration(this, true);
 }
@@ -43,5 +44,6 @@ void SmartObject::operator delete(void* obj)
 
 SmartObject::~SmartObject()
 {
+    //std::cout << "Smart Obj destruct " << this->size_ << std::endl;
     GarbageCollector::deRegistration(this);
 }
