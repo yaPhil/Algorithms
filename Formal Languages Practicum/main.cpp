@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <map>
 
 
 class FiniteState
@@ -84,8 +85,16 @@ private:
     std::vector<FiniteState*> finish_;
 };
 
-bool dfs(const FiniteState* v, const std::vector<FiniteState*> &end, std::string remainder)
+bool dfs( FiniteState* const v, const std::vector<FiniteState*> &end, std::map<FiniteState*, int> counter, std::string remainder)
 {
+    if(counter.count(v) == 0)
+    {
+        counter.insert({v, remainder.size()});
+    }
+    else
+    {
+        counter[v] = (int)remainder.size();
+    }
     if(remainder.size() == 0)
     {
         for (size_t i = 0; i < end.size(); ++i) {
@@ -101,18 +110,22 @@ bool dfs(const FiniteState* v, const std::vector<FiniteState*> &end, std::string
         {
             if(steps[i].first == remainder[0])
             {
-                if(dfs(steps[i].second, end, remainder.substr(1, remainder.size() - 1)))
+                if(counter.count(steps[i].second) == 0 || counter[steps[i].second] > remainder.size() - 1)
                 {
-                    return true;
+                    if (dfs(steps[i].second, end, counter, remainder.substr(1, remainder.size() - 1))) {
+                        return true;
+                    }
                 }
             }
             else
             {
                 if(steps[i].first == '1')
                 {
-                    if(dfs(steps[i].second, end, remainder))
+                    if(counter.count(steps[i].second) == 0 || counter[steps[i].second] > remainder.size())
                     {
-                        return true;
+                        if (dfs(steps[i].second, end, counter, remainder)) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -121,9 +134,11 @@ bool dfs(const FiniteState* v, const std::vector<FiniteState*> &end, std::string
         {
             if(steps[i].first == '1')
             {
-                if(dfs(steps[i].second, end, ""))
+                if(counter.count(steps[i].second) == 0 || counter[steps[i].second] > 0)
                 {
-                    return true;
+                    if (dfs(steps[i].second, end, counter, "")) {
+                        return true;
+                    }
                 }
             }
         }
@@ -243,15 +258,17 @@ int main() {
     FiniteState* start = finiteStateAutomat->getStart();
     auto finish = finiteStateAutomat->getFinish();
     searchingFragment.erase(std::remove(searchingFragment.begin(), searchingFragment.end(), '1'), searchingFragment.end());
+    std::map<FiniteState*, int> antiCircle;
     for(size_t i = 0; i < searchingFragment.size(); ++i)
     {
-        if(dfs(start, finish, searchingFragment.substr(i, searchingFragment.size() - i)))
+        antiCircle.clear();
+        if(dfs(start, finish, antiCircle, searchingFragment.substr(i, searchingFragment.size() - i)))
         {
             std::cout << searchingFragment.size() - i << std::endl;
             return 0;
         }
     }
     std::cout << 0 << std::endl;
-    //std::cout << builtExpression[0] << std::endl;
+    std::cout << builtExpression[0] << std::endl;
     return 0;
 }
