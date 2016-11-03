@@ -1,0 +1,8 @@
+//
+// Created by philipp on 04.11.16.
+//
+
+#ifndef SIMPLE_THREAD_POOL_TEST_UTILS_H
+#define SIMPLE_THREAD_POOL_TEST_UTILS_H
+
+#endif //SIMPLE_THREAD_POOL_TEST_UTILS_H
