@@ -1,0 +1,8 @@
+//
+// Created by philipp on 04.11.16.
+//
+
+#ifndef SIMPLE_THREAD_POOL_THREAD_POOL_2_H
+#define SIMPLE_THREAD_POOL_THREAD_POOL_2_H
+
+#endif //SIMPLE_THREAD_POOL_THREAD_POOL_2_H
