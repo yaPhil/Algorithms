@@ -22,20 +22,22 @@ public:
         enabled_(true)
     {}
     size_t getTaskNumbers_() {
-        //std::unique_lock<std::mutex> locker(mutex_);
+        std::unique_lock<std::mutex> locker(mutex_);
         return taskQueue_.size();
     }
 
     bool isFree_() {
-        //std::unique_lock<std::mutex> locker(mutex_);
+        std::unique_lock<std::mutex> locker(mutex_);
         return taskQueue_.empty();
     }
 
     std::future<Value> addTask_(std::function<Value()> newTask) {
-        //std::unique_lock<std::mutex> locker(mutex_);
-        taskQueue_.push(std::move(std::packaged_task<Value()>(std::move(newTask))));
-        //hasWork_.notify_one();
-        return taskQueue_.back().get_future();
+        std::unique_lock<std::mutex> locker(mutex_);
+        //taskQueue_.push(std::move(std::packaged_task<Value()>(newTask)));
+        taskQueue_.emplace(std::packaged_task<Value()>(newTask));
+        auto retFuture = taskQueue_.back().get_future();
+        hasWork_.notify_one();
+        return retFuture;
     }
     void kill() {
         enabled_ = false;
@@ -50,13 +52,14 @@ public:
 private:
     void threadFunction_() {
         while(enabled_) {
-            //std::unique_lock<std::mutex> locker(mutex_);
-            //hasWork_.wait(locker, [&]() { return !enabled_ || !taskQueue_.empty(); });
+            std::unique_lock<std::mutex> locker(mutex_);
+            hasWork_.wait(locker, [&]() { return !enabled_ || !taskQueue_.empty(); });
             while (!taskQueue_.empty()) {
-                //locker.unlock();
-                taskQueue_.front()();
-                //locker.lock();
+                std::packaged_task<Value()> currentTask = std::move(taskQueue_.front());
                 taskQueue_.pop();
+                locker.unlock();
+                currentTask();
+                locker.lock();
             }
         }
     }
