@@ -29,7 +29,7 @@ public:
     std::future<Value> submit(std::function<Value()> function) {
         //std::cout << "subm\n";
         if (!open_) {
-            throw new std::runtime_error("Cant add task after shutdown");
+            throw std::runtime_error("Cant add task after shutdown");
         }
         //std::cout << "subm_aft_if\n";
         std::unique_lock<std::mutex> locker(mutex_);
