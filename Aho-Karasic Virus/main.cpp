@@ -13,12 +13,16 @@ public:
         up = nullptr;
         charToParent = toPar;
         isLeaf = false;
+        numberTerm = 0;
+        isNumberCounted = false;
     }
     std::vector<TNode*> son;                                // массив сыновей
     std::vector<TNode*> go;                                 // массив переходов (запоминаем переходы в ленивой рекурсии), используемый для вычисления суффиксных ссылок
     TNode* parent;                                // вершина родитель
     TNode* suffLink;                              // суффиксная ссылка (вычисляем в ленивой рекурсии)
     TNode* up;                                    // сжатая суффиксная ссылка
+    bool isNumberCounted;
+    long long numberTerm;
     char charToParent;                          // символ, ведущий к родителю
     bool isLeaf;                                // флаг, является ли вершина терминалом
     std::vector<int> leafPatternNumber;              // номера строк, за которые отвечает терминал
@@ -69,17 +73,35 @@ void addString(const std::string &s, int patternNumber) {
     cur->leafPatternNumber.push_back(patternNumber);
 }
 
+long long getTermCounter(TNode* v) {
+    if(v == nullptr) {
+        return 0;
+    }
+    if(!v->isNumberCounted) {
+        v->isNumberCounted = true;
+        if(v == root) {
+            v->numberTerm = 0;
+        } else {
+            if(v->isLeaf) {
+                v->numberTerm += v->leafPatternNumber.size();
+            }
+            v->numberTerm += getTermCounter(getSuffixLink(v));
+        }
+    }
+    return v->numberTerm;
+}
+
 std::map<TNode*, int> color;
 
 bool dfs(TNode* v) {
     color[v] = 1;
     for(int i = 0; i < 2; ++i) {
         TNode* next = getLink(v, (char)(i + '0'));
-        if(color.count(next) == 0 && !next->isLeaf) {
+        if(color.count(next) == 0 && getTermCounter(next) == 0) {
             if(dfs(next)) {
                 return true;
             }
-        } else if(!next->isLeaf && color[next] == 1) {
+        } else if(getTermCounter(next) == 0 && color[next] == 1) {
             return true;
         }
     }
