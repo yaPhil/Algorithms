@@ -7,25 +7,29 @@
 #pragma once
 
 #include "geometry.h"
+#include "color.h"
 
 class SolidObject {
 public:
-    SolidObject() : color_(0), norm_() {}
-    SolidObject(int color, Vector n) : color_(color), norm_(n) {}
-    SolidObject(int color) : color_(color), norm_() {}
+    SolidObject() : color_(), norm_(true) {}
+    SolidObject(Color color) : color_(color), norm_(true) {}
 
     void reNorm() {
-        norm_ = norm_ * (-1);
+        norm_ = !norm_;
     }
-    void setNorm(Vector n) {
-        norm_ = n;
-    }
-    Vector getNorm() {
+    bool getOrient() {
         return norm_;
     }
+    virtual Vector getNorm(Vector p) = 0;
+    virtual Vector intersectRay(Ray ray) = 0;
+
+    Color getColor() const {
+        return color_;
+    }
+
 private:
-    int color_;
-    Vector norm_;
+    Color color_;
+    bool norm_;
 };
 
 #endif //RAY_TRACING_SOLID_OBJECT_H

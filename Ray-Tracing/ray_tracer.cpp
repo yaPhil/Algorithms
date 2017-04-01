@@ -1,0 +1,60 @@
+//
+// Created by philipp on 31.03.17.
+//
+
+#include "ray_tracer.h"
+#include <thread>
+#include <iostream>
+#include <fstream>
+
+RayTraicer::RayTraicer(std::string file) {
+    std::ifstream in(file);
+
+}
+
+void RayTraicer::addObject(SolidObject *obj) {
+    scene_.addObject(obj);
+}
+
+void RayTraicer::addLight(LightSource light) {
+    scene_.addLight(light);
+}
+
+void RayTraicer::traceRays(int start, QImage &img) {
+    if(start == -1) {
+        for (int y = 0; y <= resY_; ++y) {
+            for (int x = 0; x <= resX_; ++x) {
+                Ray ray = camera_.getRay(resX_, resY_, x, y);
+                SolidObject* obj = scene_.traceRay(ray).getObject();
+                if(obj != nullptr) {
+                    Color col = obj->getColor();
+                    img.setPixelColor(x, y, QColor(col.getRed() * 255, col.getGreen() * 255, col.getBlue() * 255));
+                } else {
+                    img.setPixelColor(x, y, QColor(0, 0, 0));
+                }
+            }
+        }
+    } else {
+        for (int y = start; y <= resY_; y+=8) {
+            for (int x = 0; x <= resX_; ++x) {
+                Ray ray = camera_.getRay(resX_, resY_, x, y);
+                SolidObject* obj = scene_.traceRay(ray).getObject();
+                if(obj != nullptr) {
+                    Color col = obj->getColor();
+                    img.setPixelColor(x, y, QColor(col.getRed() * 255, col.getGreen() * 255, col.getBlue() * 255));
+                } else {
+                    img.setPixelColor(x, y, QColor(0, 0, 0));
+                }
+            }
+        }
+    }
+}
+
+void RayTraicer::run(QImage &img) {
+    std::thread tr1(&RayTraicer::traceRays, this, 0, std::ref(img)), tr2(&RayTraicer::traceRays, this, 1, std::ref(img));
+    std::thread tr3(&RayTraicer::traceRays, this, 2, std::ref(img)), tr4(&RayTraicer::traceRays, this, 3, std::ref(img));
+    std::thread tr5(&RayTraicer::traceRays, this, 4, std::ref(img)), tr6(&RayTraicer::traceRays, this, 5, std::ref(img));
+    std::thread tr7(&RayTraicer::traceRays, this, 6, std::ref(img)), tr8(&RayTraicer::traceRays, this, 7, std::ref(img));
+    tr1.join(); tr2.join(); tr3.join(); tr4.join();
+    tr5.join(); tr6.join(); tr7.join(); tr8.join();
+}
