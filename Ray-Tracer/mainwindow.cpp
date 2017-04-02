@@ -15,10 +15,11 @@ void MainWindow::paintEvent(QPaintEvent *event)
     QPainter painter(this);
 
     QImage img(700, 700, QImage::Format_RGB32);
-    RayTraicer tracer(Vector(0, 0, 0), Vector(2, -1, 1), Vector(2, 1, 1), Vector(2, -1, -1), 699, 699);
+    //RayTraicer tracer(Vector(0, 0, 0), Vector(2, -1, 1), Vector(2, 1, 1), Vector(2, -1, -1), 699, 699);
+    RayTraicer tracer("/home/philipp/GitHub/Algorithms/Ray-Tracer/input");
     //tracer.addObject(new Sphere(Color(0.5, 0, 0.5, 0), Vector(5, 0, 0), 1));
-    tracer.addObject(new Sphere(Color(0, 0, 1, 0), Vector(5, 0, 0), 1));
-    tracer.addObject(new Triangle(Color(1, 0, 0, 0), Vector(4.0, -1, 1), Vector(4.0, 1, 1), Vector(4.7, 0.2, -2)));
+    //tracer.addObject(new Sphere(Color(0, 0, 1, 0, 0, 0), Vector(5, 0, 0), 1));
+    //tracer.addObject(new Triangle(Color(1, 0, 0, 0, 0, 0), Vector(4.0, -1, 1), Vector(4.0, 1, 1), Vector(4.7, 0.2, -2)));
     //tracer.traceRays(-1, img);
     tracer.run(img);
 

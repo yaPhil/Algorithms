@@ -43,3 +43,6 @@ HEADERS  += mainwindow.h \
     ../Ray-Tracing/solid_object.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES += \
+    input

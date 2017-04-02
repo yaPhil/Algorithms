@@ -15,7 +15,7 @@ void Scene::addLight(LightSource light) {
 
 Scene::Intersect Scene::traceRay(Ray ray) {
     Intersect ans = Intersect();
-    long double dist = 9999999999999;
+    long double dist = 9999999999999999;
     for(size_t i = 0; i < objects_.size(); ++i) {
         Vector intersection = objects_[i]->intersectRay(ray);
         if(intersection != Vector(0, 0, 0) && (intersection - ray.getBegin()).sqrLength() < dist) {

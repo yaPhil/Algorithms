@@ -1,0 +1,44 @@
+# Описание экрана
+viewport
+	origin 0 0 0		# Положение глаза наблюдателя
+	topleft 2 -1 1		# Верхний-левый угол экрана
+	bottomleft 2 -1 -1	# Нижний-левый угол экрана
+	topright 2 1 1		# Верхний-правый угол экрана
+        resolution 699 699
+endviewport
+
+materials
+    entry
+        name red	# Имя
+        color 255 0 0		# Цвет поверхности
+        # Коэффициент прозрачности (1-непрозрачный)
+        alpha 1
+        reflect 0		# Коэффициент отражения
+        refract 0		# Коэффициент преломления
+    endentry
+
+    entry
+        name blue
+        color 0 0 255
+        alpha 1
+        reflect 0
+        refract 0
+    endentry
+endmaterials
+
+# Описание примитивов
+geometry
+        sphere
+                coords 5 0 0
+                radius 1
+                material blue
+        endsphere
+        triangle
+                vertex 4 -1 1
+                vertex 4 1 1
+                vertex 4.7 0.2 -2
+                material red
+        endtriangle
+endgeometry
+
+
