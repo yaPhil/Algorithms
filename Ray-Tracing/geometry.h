@@ -23,6 +23,10 @@ public:
             x_(x), y_(y), z_(z) {}
     Vector(const Vector& c) : x_(c.x_), y_(c.y_), z_(c.z_) {}
 
+    long double getX() { return x_; }
+    long double getY() { return y_; }
+    long double getZ() { return z_; }
+
     Vector operator-();
 
     long double length() ;
@@ -49,6 +53,8 @@ Vector operator/ (Vector left, const long double c);
 Vector operator/ (const long double c, Vector rhs);
 bool operator==(const Vector& lhs, const Vector& rhs);
 bool operator!=(const Vector& lhs, const Vector& rhs);
+
+const long double EPS = 0.000000001;
 
 class Ray {
 public:

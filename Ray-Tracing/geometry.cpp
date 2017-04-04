@@ -5,6 +5,8 @@
 
 #include "geometry.h"
 
+
+
 Vector Vector::operator-() {
     return Vector(-x_, -y_, -z_);
 }
@@ -34,10 +36,9 @@ long double Vector::absVolume(Vector a, Vector b) {
     return std::abs(orientVolume(a, b));
 }
 int Vector::checkColinear(Vector a) {
-    long double eps = 0.000000001;
-    if(std::abs(dotProduct(a) - a.length() * length()) <= eps)
+    if(std::abs(dotProduct(a) - a.length() * length()) <= EPS)
         return 1;
-    if(std::abs(-dotProduct(a) - a.length() * length()) <= eps)
+    if(std::abs(-dotProduct(a) - a.length() * length()) <= EPS)
         return -1;
     return 0;
 }

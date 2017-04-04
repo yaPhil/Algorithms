@@ -13,14 +13,24 @@ void Scene::addLight(LightSource light) {
     lights_.push_back(light);
 }
 
-Scene::Intersect Scene::traceRay(Ray ray) {
+LightSource Scene::getLight(int i) {
+    return lights_[i];
+}
+
+int Scene::getLightsNumber() {
+    return lights_.size();
+}
+
+Intersect Scene::traceRay(Ray ray, SolidObject *exception) {
     Intersect ans = Intersect();
-    long double dist = 9999999999999999;
+    long double dist = 1.7E+307;
     for(size_t i = 0; i < objects_.size(); ++i) {
-        Vector intersection = objects_[i]->intersectRay(ray);
-        if(intersection != Vector(0, 0, 0) && (intersection - ray.getBegin()).sqrLength() < dist) {
-            dist = (intersection - ray.getBegin()).sqrLength();
-            ans = Intersect(intersection, objects_[i]);
+        if(objects_[i] == exception)
+            continue;
+        Intersect intersection = objects_[i]->intersectRay(ray);
+        if(intersection.getResult() && (intersection.getPoint() - ray.getBegin()).length() < dist) {
+            dist = (intersection.getPoint() - ray.getBegin()).length();
+            ans = intersection;
         }
     }
     return ans;

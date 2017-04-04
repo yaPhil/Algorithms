@@ -14,9 +14,9 @@ public:
     {}
 
     Vector getNorm(Vector p=Vector()) override;
-    Vector intersectRay(Ray ray) override;
+    Intersect intersectRay(Ray ray) override;
     bool checkPoint (Vector p);
-
+    Vector projectPoint(Vector p) override;
 private:
     Vector a_;
     Vector b_;
@@ -26,15 +26,15 @@ private:
 class Sphere : public SolidObject {
 public:
     Sphere() : SolidObject(), center_(), rad_(0) {}
-    Sphere(Color color, Vector c, double r) : SolidObject(color), center_(c), rad_(r) {}
+    Sphere(Color color, Vector c, long double r) : SolidObject(color), center_(c), rad_(r) {}
 
     Vector getNorm(Vector p) override;
 
-    Vector intersectRay(Ray ray) override;
-
+    Intersect intersectRay(Ray ray) override;
+    Vector projectPoint(Vector p) override;
 private:
     Vector center_;
-    double rad_;
+    long double rad_;
 };
 
 #endif //RAY_TRACING_BASE_OBJECT_H

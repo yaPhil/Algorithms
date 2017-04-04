@@ -24,6 +24,7 @@ public:
     void traceRays(int start, QImage &img);
     void run(QImage &img);
 private:
+    void setColor(int x, int y, QImage &img);
     Scene scene_;
     Camera camera_;
     int resX_;

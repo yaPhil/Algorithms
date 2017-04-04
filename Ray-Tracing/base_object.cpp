@@ -1,8 +1,6 @@
 //
 // Created by philipp on 30.03.17.
 //
-#pragma once
-
 #include "base_object.h"
 #include "geometry.h"
 
@@ -13,31 +11,39 @@ Vector Triangle::getNorm(Vector p) {
         return -((b_ - a_).crossProduct(c_ - b_)).normed();
 }
 
-Vector Triangle::intersectRay(Ray ray) {
+Intersect Triangle::intersectRay(Ray ray) {
     Vector beg = ray.getBegin();
     Vector point = ray.getPoint();
-    long double eps = 0.0000001;
-    if (std::abs(dotProduct(point - beg, getNorm())) <= eps) {
-        return Vector();
+    if (std::abs(dotProduct(point - beg, getNorm())) <= EPS) {
+        return Intersect();
     }
     long double dist = (a_ - beg).absVolume(b_ - beg, c_ - beg) /
             (a_ - b_).crossProduct(c_ - b_).length();
     long double cos = std::abs(dotProduct(point - beg, getNorm())) / (point - beg).length();
     long double coef = dist / cos;
     Vector rightNorm = getNorm();
-    if(dotProduct(rightNorm, a_ - beg) < -eps) {
+    if(dotProduct(rightNorm, a_ - beg) < -EPS) {
         rightNorm = -rightNorm;
     }
-    if (dotProduct(rightNorm, point - beg) < -eps) {
-        return Vector();
+    if (dotProduct(rightNorm, point - beg) < -EPS) {
+        return Intersect();
     }
-    Vector candidate = (point - beg).normed() * coef;
+    Vector candidate = beg + (point - beg).normed() * coef;
     if (checkPoint(candidate)) {
-        return candidate;
+        return Intersect(candidate, this, true);
     }
     else {
-        return Vector();
+        return Intersect();
     }
+}
+
+Vector Triangle::projectPoint(Vector p) {
+    long double dist = (a_ - p).absVolume(b_ - p, c_ - p) / (a_ - b_).crossProduct(c_ - b_).length();
+    Vector norm = getNorm();
+    if(dotProduct(norm, a_ - p) < 0) {
+        norm = -norm;
+    }
+    return p + norm * dist;
 }
 
 bool Triangle::checkPoint(Vector p) {
@@ -57,17 +63,17 @@ Vector Sphere::getNorm(Vector p) {
         return -(p - center_).normed();
 }
 
-Vector Sphere::intersectRay(Ray ray) {
+Intersect Sphere::intersectRay(Ray ray) {
     Vector begin = ray.getBegin();
     Vector point = ray.getPoint();
     long double sqrHeigth = (center_ - begin).crossProduct(point - begin).sqrLength() /
             (point - begin).sqrLength();
     if(sqrHeigth > rad_ * rad_) {
-        return  Vector();
+        return  Intersect();
     }
     if((center_ - begin).dotProduct(point - begin) < 0 &&
             (center_ - begin).sqrLength() > rad_ * rad_) {
-        return Vector();
+        return Intersect();
     }
     long double len = 0;
     if((center_ - begin).sqrLength() > rad_ * rad_ ||
@@ -79,5 +85,10 @@ Vector Sphere::intersectRay(Ray ray) {
         len = std::sqrt((center_ - begin).sqrLength() - sqrHeigth) +
               std::sqrt(rad_ * rad_ - sqrHeigth);
     }
-    return (point - begin).normed() * len;
+    return Intersect(begin + (point - begin).normed() * len, this, true);
+}
+
+Vector Sphere::projectPoint(Vector p) {
+    long double curLength = (p - center_).length();
+    return p + ((p - center_).normed() * (rad_ - curLength));
 }
