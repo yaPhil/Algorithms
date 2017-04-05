@@ -25,9 +25,14 @@ public:
     void run(QImage &img);
 private:
     void setColor(int x, int y, QImage &img);
+    Vector getColor(Ray ray, int depth);
+    Vector getIllumination(Ray ray, Vector point, SolidObject* obj);
     Scene scene_;
     Camera camera_;
     int resX_;
     int resY_;
 };
+
+const int MAX_RECURSIVE_DEPTH = 10;
+const long double EPS_MARGIN = 0.00000001;
 #endif //RAY_TRACING_RAY_TRACER_H

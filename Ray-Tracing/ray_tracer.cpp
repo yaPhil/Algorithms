@@ -259,34 +259,66 @@ void RayTraicer::addLight(LightSource light) {
     scene_.addLight(light);
 }
 
+Vector RayTraicer::getIllumination(Ray ray, Vector point, SolidObject* obj) {
+    Color baseColor = obj->getColor();
+    Vector baseCol = Vector(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue());
+    Vector color = baseCol * LightSource::baseShining;
+    for(int i = 0; i < scene_.getLightsNumber(); ++i) {
+        LightSource lighter = scene_.getLight(i);
+        Ray light = Ray(point, lighter.getPosition());
+        Vector toLight = lighter.getPosition() - point;
+        if(dotProduct(obj->getNorm(point), -toLight) * dotProduct(obj->getNorm(point), (point - ray.getBegin())) < 0) {
+            continue;
+        }
+        Intersect lightInter = scene_.traceRay(light, obj);
+        if(!lightInter.getResult() || (toLight.length() - (lightInter.getPoint() - point).length()  <= EPS)) {
+            color = color + (baseCol * lighter.getIntense() * std::abs(dotProduct(obj->getNorm(point), toLight))
+                             / ((toLight).sqrLength() * toLight.length()));
+        }
+    }
+    return Vector(std::min(color.getX(), (long double)1), std::min(color.getY(), (long double)1), std::min(color.getZ(), (long double)1));
+}
+
+Vector RayTraicer::getColor(Ray ray, int depth) {
+    Intersect inter = scene_.traceRay(ray, nullptr);
+    if(!inter.getResult()) {
+        return Vector();
+    }
+    SolidObject* obj = inter.getObject();
+    Color baseMaterial = obj->getColor();
+    Vector point = inter.getPoint();
+    Vector baseColor = getIllumination(ray, point, obj);
+    if(depth == MAX_RECURSIVE_DEPTH)
+        return baseColor;
+    Vector rayDirection = ray.getBegin() - point;
+    Vector norm = obj->getNorm(point);
+    Vector reflectedDirection = (norm * dotProduct(rayDirection, norm) * 2.0) - rayDirection;
+    Ray reflectedRay = Ray(point + reflectedDirection.normed() * EPS_MARGIN, point + reflectedDirection);
+    Vector reflectedColor;
+    if(baseMaterial.getReflection() != 0) {
+        reflectedColor = getColor(reflectedRay, depth + 1);
+    } else {
+        reflectedColor = Vector();
+    }
+    //napisat prelomlenie lucha
+    //
+    //
+    Ray refractedRay = Ray(point - rayDirection.normed() * EPS_MARGIN, point - rayDirection);
+    Vector refractedColor;
+    if(baseMaterial.getAlpha() != 1) {
+        refractedColor = getColor(refractedRay, depth + 1);
+    } else {
+        refractedColor = Vector();
+    }
+    return reflectedColor * baseMaterial.getReflection() + (1 - baseMaterial.getReflection()) *
+            (baseMaterial.getAlpha() * baseColor + (1 - baseMaterial.getAlpha()) * refractedColor);
+}
 
 void RayTraicer::setColor(int x, int y, QImage &img) {
     Ray ray = camera_.getRay(resX_, resY_, x, y);
-    Intersect inter = scene_.traceRay(ray, nullptr);
-    if(inter.getResult()) {
-        Color baseColor = inter.getObject()->getColor();
-        SolidObject* obj = inter.getObject();
-        Vector point = inter.getPoint();
-        Vector baseCol = Vector(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue());
-        Vector color = baseCol * LightSource::baseShining;
-        for(int i = 0; i < scene_.getLightsNumber(); ++i) {
-            LightSource lighter = scene_.getLight(i);
-            Ray light = Ray(point, lighter.getPosition());
-            Vector toLight = lighter.getPosition() - point;
-            if(dotProduct(obj->getNorm(point), -toLight) * dotProduct(obj->getNorm(point), (point - ray.getBegin())) < 0) {
-                continue;
-            }
-            Intersect lightInter = scene_.traceRay(light, obj);
-            if(!lightInter.getResult() || (toLight.length() - (lightInter.getPoint() - point).length()  <= EPS)) {
-                color = color + (baseCol * lighter.getIntense() * std::abs(dotProduct(obj->getNorm(point), toLight))
-                                 / ((toLight).sqrLength() * toLight.length()));
-            }
-        }
-        img.setPixelColor(x, y, QColor(std::min(color.getX(), (long double)1) * 255, std::min(color.getY(), (long double)1) * 255,
+    Vector color = getColor(ray, 0);
+    img.setPixelColor(x, y, QColor(std::min(color.getX(), (long double)1) * 255, std::min(color.getY(), (long double)1) * 255,
                                        std::min(color.getZ(), (long double)1) * 255));
-    } else {
-        img.setPixelColor(x, y, QColor(0, 0, 0));
-    }
 }
 
 void RayTraicer::traceRays(int start, QImage &img) {
