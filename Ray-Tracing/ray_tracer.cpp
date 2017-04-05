@@ -303,12 +303,28 @@ Vector RayTraicer::getColor(Ray ray, int depth) {
     //napisat prelomlenie lucha
     //
     //
-    Ray refractedRay = Ray(point - rayDirection.normed() * EPS_MARGIN, point - rayDirection);
+    rayDirection = -rayDirection;
+    long double cos = dotProduct(rayDirection, norm) / rayDirection.length();
+    long double coef;
     Vector refractedColor;
-    if(baseMaterial.getAlpha() != 1) {
-        refractedColor = getColor(refractedRay, depth + 1);
-    } else {
-        refractedColor = Vector();
+    Ray refractedRay;
+    if (baseMaterial.getRefraction() != 0) {
+        if (cos < -EPS) {
+            cos *= -1;
+            norm = -norm;
+            coef = std::max(baseMaterial.getRefraction(), 1.0 / baseMaterial.getRefraction());
+        }
+        else
+        {
+            coef = std::min(baseMaterial.getRefraction(), 1.0 / baseMaterial.getRefraction());
+        }
+
+        long double k = 1.0 - coef * coef * (1.0 - cos * cos);
+        if (k >= 0){
+            Vector refractedDirection = coef * rayDirection + (coef * cos - std::sqrt(k)) * norm;
+            refractedRay = Ray(point + refractedDirection.normed() * EPS_MARGIN, point + refractedDirection);
+            refractedColor = getColor(refractedRay, depth + 1);
+        }
     }
     return reflectedColor * baseMaterial.getReflection() + (1 - baseMaterial.getReflection()) *
             (baseMaterial.getAlpha() * baseColor + (1 - baseMaterial.getAlpha()) * refractedColor);

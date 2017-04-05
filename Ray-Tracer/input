@@ -20,15 +20,15 @@ materials
     entry
         name blue
         color 10 10 255
-        alpha 1
+        alpha 0.1
         reflect 0
-        refract 0
+        refract 1.2
     endentry
 
     entry
         name green
         color 10 255 10
-        alpha 0.2
+        alpha 1
         reflect 0
         refract 0
     endentry
@@ -43,7 +43,7 @@ materials
         name lagun
         color 49 175 211
         alpha 1
-        reflect 0.8
+        reflect 0
         refract 0
     endentry
 endmaterials
@@ -79,19 +79,24 @@ geometry
                 radius 1
                 material blue
         endsphere
-
         triangle
-                vertex 4 -1 1
-                vertex 4 1 1
-                vertex 4.7 0.2 -2
-                material red
-        endtriangle
-
-        sphere
-            coords 5 1 0
-            radius 1.25
+            vertex 7 0 -0.5
+            vertex 7 1 -0.5
+            vertex 7 0.5 0.5
             material green
-        endsphere
+        endtriangle
+        #triangle
+        #        vertex 4 -1 1
+        #        vertex 4 1 1
+        #        vertex 4.7 0.2 -2
+        #        material red
+        #endtriangle
+
+        #sphere
+        #    coords 5 1 0
+        #    radius 1.25
+        #    material green
+        #endsphere
         triangle
             vertex 40 -20 -1.3
             vertex 40 20 -1.3

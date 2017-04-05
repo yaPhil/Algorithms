@@ -25,7 +25,12 @@ public:
     long double getAlpha() const {
         return alpha_;
     }
-
+    long double getReflection() const {
+        return reflection_;
+    }
+    long double getRefraction() const {
+        return refraction_;
+    }
 private:
     long double red_;
     long double green_;
