@@ -21,10 +21,12 @@ public:
     RayTraicer(std::string file);
     void addObject(SolidObject* obj);
     void addLight(LightSource light);
-    void traceRays(int start, QImage &img);
-    void run(QImage &img);
+    int getResX();
+    int getResY();
+    void traceRays(int start, QImage &img, int aa);
+    void run(QImage &img, int aa);
 private:
-    void setColor(int x, int y, QImage &img);
+    void setColor(int x, int y, QImage &img, int aa);
     Vector getColor(Ray ray, int depth);
     Vector getIllumination(Ray ray, Vector point, SolidObject* obj);
     Scene scene_;
@@ -34,5 +36,5 @@ private:
 };
 
 const int MAX_RECURSIVE_DEPTH = 10;
-const long double EPS_MARGIN = 0.00000001;
+const double EPS_MARGIN = 0.00000001;
 #endif //RAY_TRACING_RAY_TRACER_H

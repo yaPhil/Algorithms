@@ -26,7 +26,7 @@ private:
 class Sphere : public SolidObject {
 public:
     Sphere() : SolidObject(), center_(), rad_(0) {}
-    Sphere(Color color, Vector c, long double r) : SolidObject(color), center_(c), rad_(r) {}
+    Sphere(Color color, Vector c, double r) : SolidObject(color), center_(c), rad_(r) {}
 
     Vector getNorm(Vector p) override;
 
@@ -34,7 +34,7 @@ public:
     Vector projectPoint(Vector p) override;
 private:
     Vector center_;
-    long double rad_;
+    double rad_;
 };
 
 #endif //RAY_TRACING_BASE_OBJECT_H

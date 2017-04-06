@@ -13,20 +13,33 @@
 #include <map>
 #include "light_source.h"
 
+bool strIsUninformative(std::string &str)
+{
+    for (uint i = 0; i < str.size(); ++i) {
+        if (str[i] == '#')
+            return true;
+        if (str[i] != ' ' || str[i] != '\t' || str[i] != '\n' || str[i] != '\r')
+            return false;
+    }
+    return true;
+}
+
 RayTraicer::RayTraicer(std::string file) {
     std::ifstream in(file);
     Vector cam, lh, rh, ld;
     std::map<std::string, Color> materials;
     scene_ = Scene();
     for(std::string line; std::getline(in, line);) {
+        if(strIsUninformative(line)) { continue; }
         std::istringstream iss(line);
         std::string sub;
         iss >> sub;
         if(sub[0] == '#') { continue;}
         if(sub == "viewport") {
-            long double x, y, z;
+            double x, y, z;
             while(sub != "endviewport") {
                 std::getline(in, line);
+                if(strIsUninformative(line)) { continue; }
                 iss = std::istringstream(line);
                 iss >> sub;
                 if(sub[0] == '#')
@@ -60,6 +73,7 @@ RayTraicer::RayTraicer(std::string file) {
         if(sub == "materials") {
             while(sub != "endmaterials") {
                 std::getline(in, line);
+                if(strIsUninformative(line)) { continue; }
                 iss = std::istringstream(line);
                 iss >> sub;
                 if(sub[0] == '#') {
@@ -67,9 +81,10 @@ RayTraicer::RayTraicer(std::string file) {
                 }
                 if(sub == "entry") {
                     std::string name;
-                    long double r, g, b, alpha = 1, refl = 0, refr = 0;
+                    double r, g, b, alpha = 1, refl = 0, refr = 0;
                     while (sub != "endentry") {
                         std::getline(in, line);
+                        if(strIsUninformative(line)) { continue; }
                         iss = std::istringstream(line);
                         iss >> sub;
                         if(sub[0] == '#') continue;
@@ -95,9 +110,10 @@ RayTraicer::RayTraicer(std::string file) {
             }
         }
         if(sub == "lights") {
-            long double basePower, baseDist;
+            double basePower, baseDist;
             while(sub != "endlights") {
                 std::getline(in, line);
+                if(strIsUninformative(line)) { continue; }
                 iss = std::istringstream(line);
                 iss >> sub;
                 if(sub[0] == '#') {
@@ -106,6 +122,7 @@ RayTraicer::RayTraicer(std::string file) {
                 if(sub == "reference") {
                     while(sub != "endreference") {
                         std::getline(in, line);
+                        if(strIsUninformative(line)) { continue; }
                         iss = std::istringstream(line);
                         iss >> sub;
                         if(sub[0] == '#') {
@@ -120,17 +137,18 @@ RayTraicer::RayTraicer(std::string file) {
                     }
                 }
                 if(sub == "point") {
-                    long double power;
+                    double power;
                     Vector p;
                     while(sub != "endpoint") {
                         std::getline(in, line);
+                        if(strIsUninformative(line)) { continue; }
                         iss = std::istringstream(line);
                         iss >> sub;
                         if(sub[0] == '#') {
                             continue;
                         }
                         if(sub == "coords") {
-                            long double x, y, z;
+                            double x, y, z;
                             iss >> x >> y >> z;
                             p = Vector(x, y, z);
                         }
@@ -145,20 +163,22 @@ RayTraicer::RayTraicer(std::string file) {
         if(sub == "geometry") {
             while(sub != "endgeometry") {
                 std::getline(in, line);
+                if(strIsUninformative(line)) { continue; }
                 iss = std::istringstream(line);
                 iss >> sub;
                 if(sub[0] == '#') continue;
                 if(sub == "sphere") {
-                    long double rad;
+                    double rad;
                     Vector p;
                     std::string mat;
                     while(sub != "endsphere") {
                         std::getline(in, line);
+                        if(strIsUninformative(line)) { continue; }
                         iss = std::istringstream(line);
                         iss >> sub;
                         if(sub[0] == '#') continue;
                         if(sub == "coords") {
-                            long double x, y, z;
+                            double x, y, z;
                             iss >> x >> y >> z;
                             p = Vector(x, y, z);
                         }
@@ -177,11 +197,13 @@ RayTraicer::RayTraicer(std::string file) {
                     std::string mat;
                     while(sub != "endtriangle") {
                         std::getline(in, line);
+                        if(strIsUninformative(line)) { continue; }
                         iss = std::istringstream(line);
+
                         iss >> sub;
                         if(sub[0] == '#') continue;
                         if(sub == "vertex") {
-                            long double x, y, z;
+                            double x, y, z;
                             iss >> x >> y >> z;
                             if(!isAset && !isBset && !isCset) {
                                 a = Vector(x, y, z);
@@ -211,11 +233,12 @@ RayTraicer::RayTraicer(std::string file) {
                     std::string mat;
                     while(sub != "endquadrangle") {
                         std::getline(in, line);
+                        if(strIsUninformative(line)) { continue; }
                         iss = std::istringstream(line);
                         iss >> sub;
                         if(sub[0] == '#') continue;
                         if(sub == "vertex") {
-                            long double x, y, z;
+                            double x, y, z;
                             iss >> x >> y >> z;
                             if(!isAset && !isBset && !isCset) {
                                 a = Vector(x, y, z);
@@ -259,6 +282,14 @@ void RayTraicer::addLight(LightSource light) {
     scene_.addLight(light);
 }
 
+int RayTraicer::getResX() {
+    return resX_;
+}
+
+int RayTraicer::getResY() {
+    return resY_;
+}
+
 Vector RayTraicer::getIllumination(Ray ray, Vector point, SolidObject* obj) {
     Color baseColor = obj->getColor();
     Vector baseCol = Vector(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue());
@@ -276,7 +307,7 @@ Vector RayTraicer::getIllumination(Ray ray, Vector point, SolidObject* obj) {
                              / ((toLight).sqrLength() * toLight.length()));
         }
     }
-    return Vector(std::min(color.getX(), (long double)1), std::min(color.getY(), (long double)1), std::min(color.getZ(), (long double)1));
+    return Vector(std::min(color.getX(), (double)1), std::min(color.getY(), (double)1), std::min(color.getZ(), (double)1));
 }
 
 Vector RayTraicer::getColor(Ray ray, int depth) {
@@ -303,9 +334,9 @@ Vector RayTraicer::getColor(Ray ray, int depth) {
     //napisat prelomlenie lucha
     //
     //
-    rayDirection = -rayDirection;
-    long double cos = dotProduct(rayDirection, norm) / rayDirection.length();
-    long double coef;
+    rayDirection = point - ray.getBegin();
+    double cos = -dotProduct(rayDirection, norm) / rayDirection.length() / norm.length();
+    double coef;
     Vector refractedColor;
     Ray refractedRay;
     if (baseMaterial.getRefraction() != 0) {
@@ -319,9 +350,9 @@ Vector RayTraicer::getColor(Ray ray, int depth) {
             coef = std::min(baseMaterial.getRefraction(), 1.0 / baseMaterial.getRefraction());
         }
 
-        long double k = 1.0 - coef * coef * (1.0 - cos * cos);
+        double k = 1.0 - coef * coef * (1.0 - cos * cos);
         if (k >= 0){
-            Vector refractedDirection = coef * rayDirection + (coef * cos - std::sqrt(k)) * norm;
+            Vector refractedDirection = (coef * rayDirection + (coef * cos - std::sqrt(k)) * norm).normed();
             refractedRay = Ray(point + refractedDirection.normed() * EPS_MARGIN, point + refractedDirection);
             refractedColor = getColor(refractedRay, depth + 1);
         }
@@ -330,37 +361,45 @@ Vector RayTraicer::getColor(Ray ray, int depth) {
             (baseMaterial.getAlpha() * baseColor + (1 - baseMaterial.getAlpha()) * refractedColor);
 }
 
-void RayTraicer::setColor(int x, int y, QImage &img) {
-    Ray ray = camera_.getRay(resX_, resY_, x, y);
-    Vector color = getColor(ray, 0);
-    img.setPixelColor(x, y, QColor(std::min(color.getX(), (long double)1) * 255, std::min(color.getY(), (long double)1) * 255,
-                                       std::min(color.getZ(), (long double)1) * 255));
+void RayTraicer::setColor(int x, int y, QImage &img, int aa) {
+    Vector meanColor;
+    for (int i = 0; i < aa; ++i) {
+        for (int j = 0; j < aa; ++j) {
+            Ray ray = camera_.getRay(resX_ * aa + aa - 1 , resY_ * aa + aa - 1, x * aa + i, y * aa + j);
+            Vector color = getColor(ray, 0);
+            meanColor = meanColor + color;
+        }
+    }
+    meanColor = meanColor / (aa * aa);
+
+    img.setPixelColor(x, y, QColor(std::min(meanColor.getX(), (double)1) * 255, std::min(meanColor.getY(), (double)1) * 255,
+                                       std::min(meanColor.getZ(), (double)1) * 255));
 }
 
-void RayTraicer::traceRays(int start, QImage &img) {
+void RayTraicer::traceRays(int start, QImage &img, int aa) {
     if(start == -1) {
         for (int y = 0; y <= resY_; ++y) {
             for (int x = 0; x <= resX_; ++x) {
-                if (x == 350 && y == 5) {
+                if (x == 250 && y == 330) {
                     std::cout << "stop";
                 }
-                setColor(x, y, img);
+                setColor(x, y, img, aa);
             }
         }
     } else {
         for (int y = start; y <= resY_; y+=8) {
-            for (int x = 0; x <= resX_; ++x) {
-                setColor(x, y, img);
+            for (int x = 0; x <= resX_; x++) {
+                setColor(x, y, img, aa);
             }
         }
     }
 }
 
-void RayTraicer::run(QImage &img) {
-    std::thread tr1(&RayTraicer::traceRays, this, 0, std::ref(img)), tr2(&RayTraicer::traceRays, this, 1, std::ref(img));
-    std::thread tr3(&RayTraicer::traceRays, this, 2, std::ref(img)), tr4(&RayTraicer::traceRays, this, 3, std::ref(img));
-    std::thread tr5(&RayTraicer::traceRays, this, 4, std::ref(img)), tr6(&RayTraicer::traceRays, this, 5, std::ref(img));
-    std::thread tr7(&RayTraicer::traceRays, this, 6, std::ref(img)), tr8(&RayTraicer::traceRays, this, 7, std::ref(img));
+void RayTraicer::run(QImage &img, int aa) {
+    std::thread tr1(&RayTraicer::traceRays, this, 0, std::ref(img), aa), tr2(&RayTraicer::traceRays, this, 1, std::ref(img), aa);
+    std::thread tr3(&RayTraicer::traceRays, this, 2, std::ref(img), aa), tr4(&RayTraicer::traceRays, this, 3, std::ref(img), aa);
+    std::thread tr5(&RayTraicer::traceRays, this, 4, std::ref(img), aa), tr6(&RayTraicer::traceRays, this, 5, std::ref(img), aa);
+    std::thread tr7(&RayTraicer::traceRays, this, 6, std::ref(img), aa), tr8(&RayTraicer::traceRays, this, 7, std::ref(img), aa);
     tr1.join(); tr2.join(); tr3.join(); tr4.join();
     tr5.join(); tr6.join(); tr7.join(); tr8.join();
 }

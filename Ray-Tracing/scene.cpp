@@ -23,7 +23,7 @@ int Scene::getLightsNumber() {
 
 Intersect Scene::traceRay(Ray ray, SolidObject *exception) {
     Intersect ans = Intersect();
-    long double dist = 1.7E+307;
+    double dist = 1.7E+307;
     for(size_t i = 0; i < objects_.size(); ++i) {
         if(objects_[i] == exception)
             continue;

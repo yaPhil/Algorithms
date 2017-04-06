@@ -11,18 +11,18 @@
 class LightSource {
 public:
     LightSource() : position_(), intense_(0) {}
-    LightSource(Vector v, long double i) : position_(v), intense_(i) {}
+    LightSource(Vector v, double i) : position_(v), intense_(i) {}
 
     Vector getPosition() const {
         return position_;
     }
 
-    long double getIntense() const {
+    double getIntense() const {
         return intense_;
     }
-    static const long double baseShining;
+    static const double baseShining;
 private:
     Vector position_;
-    long double intense_;
+    double intense_;
 };
 #endif //RAY_TRACING_LIGHT_SOURCE_H

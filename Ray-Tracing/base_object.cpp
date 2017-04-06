@@ -17,10 +17,10 @@ Intersect Triangle::intersectRay(Ray ray) {
     if (std::abs(dotProduct(point - beg, getNorm())) <= EPS) {
         return Intersect();
     }
-    long double dist = (a_ - beg).absVolume(b_ - beg, c_ - beg) /
+    double dist = (a_ - beg).absVolume(b_ - beg, c_ - beg) /
             (a_ - b_).crossProduct(c_ - b_).length();
-    long double cos = std::abs(dotProduct(point - beg, getNorm())) / (point - beg).length();
-    long double coef = dist / cos;
+    double cos = std::abs(dotProduct(point - beg, getNorm())) / (point - beg).length();
+    double coef = dist / cos;
     Vector rightNorm = getNorm();
     if(dotProduct(rightNorm, a_ - beg) < -EPS) {
         rightNorm = -rightNorm;
@@ -38,7 +38,7 @@ Intersect Triangle::intersectRay(Ray ray) {
 }
 
 Vector Triangle::projectPoint(Vector p) {
-    long double dist = (a_ - p).absVolume(b_ - p, c_ - p) / (a_ - b_).crossProduct(c_ - b_).length();
+    double dist = (a_ - p).absVolume(b_ - p, c_ - p) / (a_ - b_).crossProduct(c_ - b_).length();
     Vector norm = getNorm();
     if(dotProduct(norm, a_ - p) < 0) {
         norm = -norm;
@@ -66,7 +66,7 @@ Vector Sphere::getNorm(Vector p) {
 Intersect Sphere::intersectRay(Ray ray) {
     Vector begin = ray.getBegin();
     Vector point = ray.getPoint();
-    long double sqrHeigth = (center_ - begin).crossProduct(point - begin).sqrLength() /
+    double sqrHeigth = (center_ - begin).crossProduct(point - begin).sqrLength() /
             (point - begin).sqrLength();
     if(sqrHeigth > rad_ * rad_) {
         return  Intersect();
@@ -75,7 +75,7 @@ Intersect Sphere::intersectRay(Ray ray) {
             (center_ - begin).sqrLength() > rad_ * rad_) {
         return Intersect();
     }
-    long double len = 0;
+    double len = 0;
     if((center_ - begin).sqrLength() > rad_ * rad_ ||
             (center_ - begin).dotProduct(point - begin) < 0) {
         len = std::abs(std::sqrt((center_ - begin).sqrLength() - sqrHeigth) -
@@ -89,6 +89,6 @@ Intersect Sphere::intersectRay(Ray ray) {
 }
 
 Vector Sphere::projectPoint(Vector p) {
-    long double curLength = (p - center_).length();
+    double curLength = (p - center_).length();
     return p + ((p - center_).normed() * (rad_ - curLength));
 }
