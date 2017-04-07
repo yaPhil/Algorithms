@@ -8,13 +8,17 @@
 
 #include "geometry.h"
 #include "color.h"
+#include "light_source.h"
+#include "bound_box.h"
 
 class Intersect;
+class ReflectedLightSource;
+class LightSource;
 
 class SolidObject {
 public:
-    SolidObject() : color_(), norm_(true) {}
-    SolidObject(Color color) : color_(color), norm_(true) {}
+    SolidObject() : color_(), norm_(true), box_() {}
+    SolidObject(Color color) : color_(color), norm_(true), box_() {}
 
     void reNorm() {
         norm_ = !norm_;
@@ -25,13 +29,35 @@ public:
     virtual Vector getNorm(Vector p) = 0;
     virtual Intersect intersectRay(Ray ray) = 0;
     virtual Vector projectPoint(Vector p) = 0;
+    virtual ReflectedLightSource getSecondaryLight(LightSource light) = 0;
+
+    virtual bool between(Vector first, Vector second) = 0;
+
     Color getColor() const {
         return color_;
     }
+    BoundBox getBox() const {
+        return box_;
+    }
+    void setBox(BoundBox box) {
+        box_ = box;
+    }
 
+    bool xCompare(SolidObject *first, SolidObject *second) {
+        return first->box_.getDownCorner().getX() < second->box_.getDownCorner().getX();
+    }
+
+    bool yCompare(SolidObject *first, SolidObject *second) {
+        return first->box_.getDownCorner().getY() < second->box_.getDownCorner().getY();
+    }
+
+    bool zCompare(SolidObject *first, SolidObject *second) {
+        return first->box_.getDownCorner().getZ() < second->box_.getDownCorner().getZ();
+    }
 private:
     Color color_;
     bool norm_;
+    BoundBox box_;
 };
 
 class Intersect {

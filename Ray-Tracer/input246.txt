@@ -1,0 +1,160 @@
+
+viewport
+	origin 0 0 0		
+        topleft 2 -2 2		
+        bottomleft 2 -2 -2	
+        topright 2 2 2		
+        resolution 699 699
+endviewport
+
+materials
+    entry
+        name 1	
+        color 200 10 10
+        alpha 1
+        reflect 0		
+        refract 1		
+    endentry
+
+entry
+        name 6	
+        color 200 10 10
+        alpha 1
+        reflect 0.7	
+        refract 0		
+    endentry
+
+    entry
+        name 2
+        color 10 200 10
+        alpha 1
+        reflect 0
+        refract 0
+    endentry
+
+    entry
+        name 3
+        color 10 10 200
+        alpha 1
+        reflect 0.2
+        refract 0
+    endentry
+    entry
+        name 4
+        color 255 255 255
+        alpha 1
+        reflect 0
+        refract 0
+    endentry
+    entry
+        name 5
+        color 10 200 200
+        alpha 1
+        reflect 0
+        refract 0
+    endentry
+endmaterials
+
+lights
+        reference
+                power 1
+                distance 1
+        endreference
+
+	point
+            coords 2 -2 2
+            power 5
+        endpoint
+
+endlights
+
+
+geometry
+ 
+
+
+
+
+	triangle
+            vertex 20 -20 -1.3
+            vertex 20 20 -1.3
+            vertex -10 0 10
+            material 5
+        endtriangle 
+
+
+triangle
+            vertex 20 -5 -1.3
+            vertex 20 5 -1.3
+            vertex -20 0 -5
+            material 4
+       endtriangle
+
+
+       
+  triangle
+                vertex 4 -1 1
+                vertex 4 1 1
+                vertex 4.7 0.2 -2
+                material 1
+        endtriangle
+    
+ sphere
+            coords 5 1 0
+            radius 1.25
+            material 3
+        endsphere
+
+
+         sphere
+                coords 5 0 0
+                radius 1
+                material 2
+        endsphere
+
+
+
+
+ triangle
+                vertex 5 -1 2.5
+                vertex 3.5 -3 3.5
+                vertex 4 1 3.5
+                material 6
+        endtriangle	
+
+
+endgeometry
+
+point
+            coords 10 0 5
+            power 20
+        endpoint
+
+
+        point
+                coords 3 1 1
+                power 4
+        endpoint
+
+
+
+
+
+
+
+
+
+ triangle
+                vertex 3 -1 0
+                vertex 3 1 0
+                vertex 2 0 1
+                material 6
+        endtriangle	
+
+ triangle
+                vertex 3 1 0
+                vertex 3 -1 0
+                vertex 2 0 -1
+                material 4
+        endtriangle	
+

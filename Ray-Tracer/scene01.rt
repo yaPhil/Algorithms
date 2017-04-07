@@ -1,9 +1,9 @@
 # Описание экрана
 viewport
         origin 0 0 0		# Положение глаза наблюдателя
-        topleft 1 -2 1		# Верхний-левый угол экрана
-        bottomleft 1 -2 -1	# Нижний-левый угол экрана
-        topright 1 2 1		# Верхний-правый угол экрана
+        topleft 1 -2 2		# Верхний-левый угол экрана
+        bottomleft 1 -2 -2	# Нижний-левый угол экрана
+        topright 1 2 2		# Верхний-правый угол экрана
         resolution 699 699
 endviewport
 
@@ -20,9 +20,9 @@ materials
     entry
         name blue
         color 10 10 255
-        alpha 0.3
+        alpha 0.2
         reflect 0.0
-        refract 0.7
+        refract 0.6
     endentry
 
     entry
@@ -87,20 +87,26 @@ endlights
 
 # Описание примитивов
 geometry
-    sphere
-        coords 2.7 -1.5 0
-        radius 1
-        material blue
-    endsphere
+    #sphere
+    #    coords 2.7 -1.5 0
+    #    radius 1
+    #    material blue
+    #endsphere
     #triangle
     #    vertex 2.7 1.2 -1
-
-    #    vertex 2.7 -2.4 -2
     #    vertex 2.7 -3.1 2
+    #    vertex 2.7 -2.4 -2
+
 
     #    material blue
     #endtriangle
-
+    quadrangle
+        vertex 2.7 1.2 -1
+        vertex 2.7 -2.4 -2
+        vertex 2.7 -3.1 2
+        vertex 2.7 0 2
+        material blue
+    endquadrangle
     triangle
         vertex 4 3 1
         vertex 4 3 4

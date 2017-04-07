@@ -46,6 +46,18 @@ Vector Triangle::projectPoint(Vector p) {
     return p + norm * dist;
 }
 
+ReflectedLightSource Triangle::getSecondaryLight(LightSource light)
+{
+    Vector point = light.getPosition();
+    double distance = (a_ - point).absVolume(b_ - point, c_ - point) / (a_ - b_).crossProduct(c_ - b_).length();
+    Vector rightNorm = getNorm();
+    if((a_ - point).dotProduct(rightNorm) < -EPS) {
+        rightNorm = - rightNorm;
+    }
+    Vector reflection = point + rightNorm * 2 * distance;
+    return ReflectedLightSource(reflection, light.getIntense() * getColor().getReflection(), light, this);
+}
+
 bool Triangle::checkPoint(Vector p) {
 //    if(absVolume(a_ - p, b_ - p, c_ - p) != 0) {
 //        return false;
@@ -91,4 +103,68 @@ Intersect Sphere::intersectRay(Ray ray) {
 Vector Sphere::projectPoint(Vector p) {
     double curLength = (p - center_).length();
     return p + ((p - center_).normed() * (rad_ - curLength));
+}
+
+ReflectedLightSource Sphere::getSecondaryLight(LightSource light)
+{
+    Vector point = light.getPosition();
+    Ray toCenter = Ray(point, center_);
+    Intersect inter = intersectRay(toCenter);
+    Vector reflection = inter.getPoint() + (center_ - point).normed() * rad_ / 2.0;
+    return ReflectedLightSource(reflection, light.getIntense() * getColor().getReflection(), light, this);
+}
+
+Vector Quadrangle::getNorm(Vector p)
+{
+    Triangle born = Triangle(this->getColor(), a_, b_, c_);
+    return born.getNorm();
+}
+
+Intersect Quadrangle::intersectRay(Ray ray)
+{
+    Triangle withoutA = Triangle(getColor(), b_, c_, d_);
+    Triangle withoutB = Triangle(getColor(), c_, d_, a_);
+    Triangle withoutC = Triangle(getColor(), d_, a_, b_);
+    Triangle withoutD = Triangle(getColor(), a_, b_, c_);
+    Triangle one = withoutB, two = withoutD;
+    if(withoutA.checkPoint(a_)) {
+        one = withoutB;
+        two = withoutD;
+    }
+    if(withoutB.checkPoint(b_)) {
+        one = withoutA;
+        two = withoutC;
+    }
+    if(withoutC.checkPoint(c_)) {
+        one = withoutB;
+        two = withoutD;
+    }
+    if(withoutD.checkPoint(d_)) {
+        one = withoutA;
+        two = withoutC;
+    }
+    Intersect oneInter = one.intersectRay(ray);
+    Intersect twoInter = two.intersectRay(ray);
+    if(!oneInter.getResult() && !twoInter.getResult()) {
+        return Intersect();
+    }
+    if(oneInter.getResult() && !twoInter.getResult()) {
+        return Intersect(oneInter.getPoint(), this, true);
+    }
+    if(twoInter.getResult() && !oneInter.getResult()) {
+        return Intersect(twoInter.getPoint(), this, true);
+    }
+    return Intersect(oneInter.getPoint(), this, true);
+}
+
+Vector Quadrangle::projectPoint(Vector p)
+{
+    Triangle born = Triangle(this->getColor(), a_, b_, c_);
+    return born.projectPoint(p);
+}
+
+ReflectedLightSource Quadrangle::getSecondaryLight(LightSource light)
+{
+    Triangle born = Triangle(this->getColor(), a_, b_, c_);
+    return born.getSecondaryLight(light);
 }

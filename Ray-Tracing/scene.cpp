@@ -13,12 +13,37 @@ void Scene::addLight(LightSource light) {
     lights_.push_back(light);
 }
 
+void Scene::addSecondaryLight(ReflectedLightSource light)
+{
+    secondaryLights_.push_back(light);
+}
+
 LightSource Scene::getLight(int i) {
     return lights_[i];
 }
 
 int Scene::getLightsNumber() {
     return lights_.size();
+}
+
+ReflectedLightSource Scene::getSecondaryLight(int i)
+{
+    return secondaryLights_[i];
+}
+
+int Scene::getSecondaryLightNumber()
+{
+    return secondaryLights_.size();
+}
+
+int Scene::getObjectsNumber()
+{
+    return objects_.size();
+}
+
+SolidObject *Scene::getObject(int i)
+{
+    return objects_[i];
 }
 
 Intersect Scene::traceRay(Ray ray, SolidObject *exception) {

@@ -268,7 +268,18 @@ RayTraicer::RayTraicer(std::string file) {
                     //napisat chetirehugolnik
                     //
                     //
+                    scene_.addObject(new Quadrangle(materials[mat], a, b, c, d));
                 }
+            }
+        }
+    }
+    int lightsNumber = scene_.getLightsNumber();
+    for(int i = 0; i < lightsNumber; ++i) {
+        LightSource lighter = scene_.getLight(i);
+        for(int j = 0; j < scene_.getObjectsNumber(); ++j) {
+            SolidObject *obj = scene_.getObject(j);
+            if(obj->getColor().getReflection() > 0) {
+                scene_.addSecondaryLight(obj->getSecondaryLight(lighter));
             }
         }
     }
@@ -306,6 +317,27 @@ Vector RayTraicer::getIllumination(Ray ray, Vector point, SolidObject* obj) {
             color = color + (baseCol * lighter.getIntense() * std::abs(dotProduct(obj->getNorm(point), toLight))
                              / ((toLight).sqrLength() * toLight.length()));
         }
+    }
+    for(int i = 0; i < scene_.getSecondaryLightNumber(); ++i) {
+        ReflectedLightSource lighter = scene_.getSecondaryLight(i);
+        Vector toLight_ = lighter.getPosition() - point;
+        Ray toLight = Ray(point + toLight_.normed() * EPS_MARGIN, lighter.getPosition());
+        Intersect interPoint = scene_.traceRay(toLight, nullptr);
+        if(interPoint.getObject() != lighter.getObject() ||
+                (interPoint.getPoint() - point).length() - (lighter.getPosition() - point).length() > EPS) {
+            continue;
+        }
+        Vector toSource_ = lighter.getSource().getPosition() - interPoint.getPoint();
+        Ray toSource = Ray(interPoint.getPoint() + toSource_.normed() * EPS_MARGIN, lighter.getSource().getPosition());
+        Intersect interSource = scene_.traceRay(toSource, nullptr);
+        if(interSource.getResult() &&
+                (interSource.getPoint() - interPoint.getPoint()).length() - (lighter.getSource().getPosition() - interPoint.getPoint()).length() < -EPS) {
+            continue;
+        }
+        Vector newColor = Vector(lighter.getObject()->getColor().getRed(),
+                                 lighter.getObject()->getColor().getGreen(), lighter.getObject()->getColor().getBlue());
+        color = color + (newColor * lighter.getIntence() * std::abs(dotProduct(obj->getNorm(point), point - lighter.getPosition())))
+                / ((point - lighter.getPosition()).sqrLength() * (point - lighter.getPosition()).length());
     }
     return Vector(std::min(color.getX(), (double)1), std::min(color.getY(), (double)1), std::min(color.getZ(), (double)1));
 }
@@ -355,6 +387,8 @@ Vector RayTraicer::getColor(Ray ray, int depth) {
             Vector refractedDirection = (coef * rayDirection + (coef * cos - std::sqrt(k)) * norm).normed();
             refractedRay = Ray(point + refractedDirection.normed() * EPS_MARGIN, point + refractedDirection);
             refractedColor = getColor(refractedRay, depth + 1);
+        } else {
+
         }
     }
     return reflectedColor * baseMaterial.getReflection() + (1 - baseMaterial.getReflection()) *
@@ -380,7 +414,7 @@ void RayTraicer::traceRays(int start, QImage &img, int aa) {
     if(start == -1) {
         for (int y = 0; y <= resY_; ++y) {
             for (int x = 0; x <= resX_; ++x) {
-                if (x == 250 && y == 330) {
+                if (x == 150 && y == 221) {
                     std::cout << "stop";
                 }
                 setColor(x, y, img, aa);

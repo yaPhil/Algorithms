@@ -1,0 +1,149 @@
+viewport
+        origin 0 0 0.3		
+        topleft 1 -2 2		
+        bottomleft 1 -2 -2	
+        topright 1 2 2	
+        resolution 699 699
+endviewport
+
+materials
+    entry
+        name 3	
+        color 255 10 10
+        alpha 1
+        reflect 0		
+        refract 1
+    endentry
+
+    entry
+        name 4
+        color 10 10 255
+        alpha 0.5
+        reflect 0.0
+        refract 2.1
+    endentry
+
+
+    entry
+        name 1
+        color 250 0 0
+        alpha 1
+        reflect 0.0
+        refract 1.0
+    endentry
+    entry
+        name 2
+        color 0 250 0
+        alpha 1
+        reflect 0.0
+        refract 1.0
+    endentry
+endmaterials
+
+lights
+        reference
+            power 1
+            distance 1
+        endreference
+
+        point
+            coords 4.0 4 0
+            power 6
+        endpoint
+        point
+            coords 0 0 6
+            power 5
+        endpoint
+        point
+            coords 2.3 -3.5 0
+            power 4
+        endpoint
+endlights
+
+
+
+geometry
+	
+	sphere
+        coords 2.7 -1.5 0.3
+        radius 1
+        material 4
+    endsphere
+   
+
+    triangle
+        vertex 7 -10 -4
+        vertex 7 -10 0
+        vertex 7 -6 -4
+        material 2
+    endtriangle
+    triangle
+        vertex 7 -6 0
+        vertex 7 -10 0
+        vertex 7 -6 -4
+        material 2
+    endtriangle
+    triangle
+        vertex 7 -6 -4
+        vertex 7 -2 -4
+        vertex 7 -6 0
+        material 1
+    endtriangle
+    triangle
+        vertex 7 -6 0
+        vertex 7 -2 0
+        vertex 7 -2 -4
+        material 1
+    endtriangle
+    triangle
+        vertex 7 -6 4
+        vertex 7 -6 0
+        vertex 7 -2 4
+        material 2
+    endtriangle
+    triangle
+        vertex 7 -6 0
+        vertex 7 -2 0
+        vertex 7 -2 4
+        material 2
+    endtriangle
+    triangle
+        vertex 7 -10 4
+        vertex 7 -10 0
+        vertex 7 -6 4
+        material 1
+    endtriangle
+    triangle
+        vertex 7 -6 0
+        vertex 7 -10 0
+        vertex 7 -6 4
+        material 1
+    endtriangle
+endgeometry
+
+
+
+    #sphere
+    #    coords 2.7 -1.5 0
+    #    radius 1
+    #    material blue
+    #endsphere
+
+
+    triangle
+        vertex 2.7 1.2 -1
+
+        vertex 2.7 -2.4 -2
+        vertex 2.7 -3.1 2
+
+        material 4
+    endtriangle
+
+ triangle
+        vertex 2.7 1.2 -1
+        vertex 2.7 -2.4 -2
+        vertex 2.7 -3.1 2
+        material 4
+    endtriangle
+
+

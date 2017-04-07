@@ -21,8 +21,8 @@ void PaintDevice::draw(bool x)
     pict = new QPicture;
     painter = new QPainter(pict);
 
-    tracer.run(img, 4);
-    //tracer.traceRays(-1, img, 1);
+    //tracer.run(img, 4);
+    tracer.traceRays(-1, img, 1);
     // —------------------
 
 //    for (uint i = 0; i < 100; ++i)

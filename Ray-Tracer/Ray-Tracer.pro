@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     ../Ray-Tracing/geometry.cpp \
     ../Ray-Tracing/ray_tracer.cpp \
     ../Ray-Tracing/scene.cpp \
-    ../Ray-Tracing/light_source.cpp
+    ../Ray-Tracing/light_source.cpp \
+    painter.cpp
 
 HEADERS  += mainwindow.h \
     ../Ray-Tracing/base_object.h \
@@ -41,9 +42,14 @@ HEADERS  += mainwindow.h \
     ../Ray-Tracing/light_source.h \
     ../Ray-Tracing/ray_tracer.h \
     ../Ray-Tracing/scene.h \
-    ../Ray-Tracing/solid_object.h
+    ../Ray-Tracing/solid_object.h \
+    painter.h \
+    ../Ray-Tracing/bound_box.h
 
 FORMS    += mainwindow.ui
 
 DISTFILES += \
-    input
+    input \
+    scene01.rt \
+    input4.txt \
+    input246.txt
