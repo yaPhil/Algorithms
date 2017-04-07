@@ -416,7 +416,7 @@ void RayTraicer::traceRays(int start, QImage &img, int aa) {
         for (int y = 0; y <= resY_; ++y) {
             for (int x = 0; x <= resX_; ++x) {
                 if (x == 150 && y == 221) {
-                    std::cout << "stop";
+                    std::cout << "stop" << "\n";
                 }
                 setColor(x, y, img, aa);
             }

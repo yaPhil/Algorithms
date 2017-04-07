@@ -25,6 +25,10 @@ public:
     int getResY();
     void traceRays(int start, QImage &img, int aa);
     void run(QImage &img, int aa);
+    void buildTree() {
+        scene_.setRoot();
+    }
+
 private:
     void setColor(int x, int y, QImage &img, int aa);
     Vector getColor(Ray ray, int depth);

@@ -37,7 +37,7 @@ materials
         color 125 72 24
         alpha 1
         reflect 0
-        refract 0
+        refract 1
     endentry
     entry
         name lagun
@@ -87,11 +87,11 @@ endlights
 
 # Описание примитивов
 geometry
-    #sphere
-    #    coords 2.7 -1.5 0
-    #    radius 1
-    #    material blue
-    #endsphere
+    sphere
+        coords 5 1 0
+        radius 1
+        material brown
+    endsphere
     #triangle
     #    vertex 2.7 1.2 -1
     #    vertex 2.7 -3.1 2
