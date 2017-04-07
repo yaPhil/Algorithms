@@ -14,30 +14,30 @@ class SolidObject;
 class LightSource {
 public:
     LightSource() : position_(), intense_(0) {}
-    LightSource(Vector v, double i) : position_(v), intense_(i) {}
+    LightSource(Vector v, long double i) : position_(v), intense_(i) {}
 
     Vector getPosition() const {
         return position_;
     }
 
-    double getIntense() const {
+    long double getIntense() const {
         return intense_;
     }
-    static const double baseShining;
+    static const long double baseShining;
 private:
     Vector position_;
-    double intense_;
+    long double intense_;
 };
 
 class ReflectedLightSource {
 public:
     ReflectedLightSource() : position_(), intense_(0), originLightSource_(), object_() {}
-    ReflectedLightSource(Vector v, double inten, LightSource source, SolidObject* obj) :
+    ReflectedLightSource(Vector v, long double inten, LightSource source, SolidObject* obj) :
         position_(v), intense_(inten), originLightSource_(source), object_(obj) {}
     Vector getPosition() const {
         return position_;
     }
-    double getIntence() {
+    long double getIntence() {
         return intense_;
     }
     LightSource getSource() const {
@@ -48,7 +48,7 @@ public:
     }
 private:
     Vector position_;
-    double intense_;
+    long double intense_;
     LightSource originLightSource_;
     SolidObject* object_;
 };

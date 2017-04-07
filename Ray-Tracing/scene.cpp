@@ -1,7 +1,6 @@
 //
 // Created by philipp on 30.03.17.
 //
-
 #include <cstdio>
 #include "scene.h"
 
@@ -47,16 +46,22 @@ SolidObject *Scene::getObject(int i)
 }
 
 Intersect Scene::traceRay(Ray ray, SolidObject *exception) {
-    Intersect ans = Intersect();
-    double dist = 1.7E+307;
-    for(size_t i = 0; i < objects_.size(); ++i) {
-        if(objects_[i] == exception)
-            continue;
-        Intersect intersection = objects_[i]->intersectRay(ray);
-        if(intersection.getResult() && (intersection.getPoint() - ray.getBegin()).length() < dist) {
-            dist = (intersection.getPoint() - ray.getBegin()).length();
-            ans = intersection;
-        }
-    }
-    return ans;
+//    Intersect ans = Intersect();
+//    long double dist = 1.7E+307;
+//    for(size_t i = 0; i < objects_.size(); ++i) {
+//        if(objects_[i] == exception)
+//            continue;
+//        Intersect intersection = objects_[i]->intersectRay(ray);
+//        if(intersection.getResult() && (intersection.getPoint() - ray.getBegin()).length() < dist) {
+//            dist = (intersection.getPoint() - ray.getBegin()).length();
+//            ans = intersection;
+//        }
+//    }
+//    return ans;
+    return root_->intersectRay(ray, root_);
+}
+
+void Scene::setRoot()
+{
+    root_ = new KdTree(objects_.begin(), objects_.end(), 0);
 }

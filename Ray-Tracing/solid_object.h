@@ -31,7 +31,7 @@ public:
     virtual Vector projectPoint(Vector p) = 0;
     virtual ReflectedLightSource getSecondaryLight(LightSource light) = 0;
 
-    virtual bool between(Vector first, Vector second) = 0;
+   // virtual bool between(Vector first, Vector second) = 0;
 
     Color getColor() const {
         return color_;
@@ -43,22 +43,23 @@ public:
         box_ = box;
     }
 
-    bool xCompare(SolidObject *first, SolidObject *second) {
-        return first->box_.getDownCorner().getX() < second->box_.getDownCorner().getX();
-    }
-
-    bool yCompare(SolidObject *first, SolidObject *second) {
-        return first->box_.getDownCorner().getY() < second->box_.getDownCorner().getY();
-    }
-
-    bool zCompare(SolidObject *first, SolidObject *second) {
-        return first->box_.getDownCorner().getZ() < second->box_.getDownCorner().getZ();
-    }
 private:
     Color color_;
     bool norm_;
     BoundBox box_;
 };
+
+inline bool xCompare(SolidObject *first, SolidObject *second) {
+    return (first->getBox().getDownCorner().getX() < second->getBox().getDownCorner().getX());
+}
+
+inline bool yCompare(SolidObject *first, SolidObject *second) {
+    return (first->getBox().getDownCorner().getY() < second->getBox().getDownCorner().getY());
+}
+
+inline bool zCompare(SolidObject *first, SolidObject *second) {
+    return (first->getBox().getDownCorner().getZ() < second->getBox().getDownCorner().getZ());
+}
 
 class Intersect {
 public:

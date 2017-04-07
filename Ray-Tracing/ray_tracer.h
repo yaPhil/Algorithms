@@ -36,5 +36,5 @@ private:
 };
 
 const int MAX_RECURSIVE_DEPTH = 10;
-const double EPS_MARGIN = 0.00000001;
+const long double EPS_MARGIN = 0.00000001;
 #endif //RAY_TRACING_RAY_TRACER_H

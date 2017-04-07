@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     ../Ray-Tracing/ray_tracer.cpp \
     ../Ray-Tracing/scene.cpp \
     ../Ray-Tracing/light_source.cpp \
-    painter.cpp
+    painter.cpp \
+    ../Ray-Tracing/kd_tree.cpp
 
 HEADERS  += mainwindow.h \
     ../Ray-Tracing/base_object.h \
@@ -44,7 +45,8 @@ HEADERS  += mainwindow.h \
     ../Ray-Tracing/scene.h \
     ../Ray-Tracing/solid_object.h \
     painter.h \
-    ../Ray-Tracing/bound_box.h
+    ../Ray-Tracing/bound_box.h \
+    ../Ray-Tracing/kd_tree.h
 
 FORMS    += mainwindow.ui
 

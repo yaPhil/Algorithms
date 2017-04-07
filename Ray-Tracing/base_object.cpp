@@ -17,10 +17,10 @@ Intersect Triangle::intersectRay(Ray ray) {
     if (std::abs(dotProduct(point - beg, getNorm())) <= EPS) {
         return Intersect();
     }
-    double dist = (a_ - beg).absVolume(b_ - beg, c_ - beg) /
+    long double dist = (a_ - beg).absVolume(b_ - beg, c_ - beg) /
             (a_ - b_).crossProduct(c_ - b_).length();
-    double cos = std::abs(dotProduct(point - beg, getNorm())) / (point - beg).length();
-    double coef = dist / cos;
+    long double cos = std::abs(dotProduct(point - beg, getNorm())) / (point - beg).length();
+    long double coef = dist / cos;
     Vector rightNorm = getNorm();
     if(dotProduct(rightNorm, a_ - beg) < -EPS) {
         rightNorm = -rightNorm;
@@ -38,7 +38,7 @@ Intersect Triangle::intersectRay(Ray ray) {
 }
 
 Vector Triangle::projectPoint(Vector p) {
-    double dist = (a_ - p).absVolume(b_ - p, c_ - p) / (a_ - b_).crossProduct(c_ - b_).length();
+    long double dist = (a_ - p).absVolume(b_ - p, c_ - p) / (a_ - b_).crossProduct(c_ - b_).length();
     Vector norm = getNorm();
     if(dotProduct(norm, a_ - p) < 0) {
         norm = -norm;
@@ -49,7 +49,7 @@ Vector Triangle::projectPoint(Vector p) {
 ReflectedLightSource Triangle::getSecondaryLight(LightSource light)
 {
     Vector point = light.getPosition();
-    double distance = (a_ - point).absVolume(b_ - point, c_ - point) / (a_ - b_).crossProduct(c_ - b_).length();
+    long double distance = (a_ - point).absVolume(b_ - point, c_ - point) / (a_ - b_).crossProduct(c_ - b_).length();
     Vector rightNorm = getNorm();
     if((a_ - point).dotProduct(rightNorm) < -EPS) {
         rightNorm = - rightNorm;
@@ -78,7 +78,7 @@ Vector Sphere::getNorm(Vector p) {
 Intersect Sphere::intersectRay(Ray ray) {
     Vector begin = ray.getBegin();
     Vector point = ray.getPoint();
-    double sqrHeigth = (center_ - begin).crossProduct(point - begin).sqrLength() /
+    long double sqrHeigth = (center_ - begin).crossProduct(point - begin).sqrLength() /
             (point - begin).sqrLength();
     if(sqrHeigth > rad_ * rad_) {
         return  Intersect();
@@ -87,7 +87,7 @@ Intersect Sphere::intersectRay(Ray ray) {
             (center_ - begin).sqrLength() > rad_ * rad_) {
         return Intersect();
     }
-    double len = 0;
+    long double len = 0;
     if((center_ - begin).sqrLength() > rad_ * rad_ ||
             (center_ - begin).dotProduct(point - begin) < 0) {
         len = std::abs(std::sqrt((center_ - begin).sqrLength() - sqrHeigth) -
@@ -101,7 +101,7 @@ Intersect Sphere::intersectRay(Ray ray) {
 }
 
 Vector Sphere::projectPoint(Vector p) {
-    double curLength = (p - center_).length();
+    long double curLength = (p - center_).length();
     return p + ((p - center_).normed() * (rad_ - curLength));
 }
 

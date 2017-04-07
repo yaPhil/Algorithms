@@ -36,7 +36,7 @@ RayTraicer::RayTraicer(std::string file) {
         iss >> sub;
         if(sub[0] == '#') { continue;}
         if(sub == "viewport") {
-            double x, y, z;
+            long double x, y, z;
             while(sub != "endviewport") {
                 std::getline(in, line);
                 if(strIsUninformative(line)) { continue; }
@@ -81,7 +81,7 @@ RayTraicer::RayTraicer(std::string file) {
                 }
                 if(sub == "entry") {
                     std::string name;
-                    double r, g, b, alpha = 1, refl = 0, refr = 0;
+                    long double r, g, b, alpha = 1, refl = 0, refr = 0;
                     while (sub != "endentry") {
                         std::getline(in, line);
                         if(strIsUninformative(line)) { continue; }
@@ -110,7 +110,7 @@ RayTraicer::RayTraicer(std::string file) {
             }
         }
         if(sub == "lights") {
-            double basePower, baseDist;
+            long double basePower, baseDist;
             while(sub != "endlights") {
                 std::getline(in, line);
                 if(strIsUninformative(line)) { continue; }
@@ -137,7 +137,7 @@ RayTraicer::RayTraicer(std::string file) {
                     }
                 }
                 if(sub == "point") {
-                    double power;
+                    long double power;
                     Vector p;
                     while(sub != "endpoint") {
                         std::getline(in, line);
@@ -148,7 +148,7 @@ RayTraicer::RayTraicer(std::string file) {
                             continue;
                         }
                         if(sub == "coords") {
-                            double x, y, z;
+                            long double x, y, z;
                             iss >> x >> y >> z;
                             p = Vector(x, y, z);
                         }
@@ -168,7 +168,7 @@ RayTraicer::RayTraicer(std::string file) {
                 iss >> sub;
                 if(sub[0] == '#') continue;
                 if(sub == "sphere") {
-                    double rad;
+                    long double rad;
                     Vector p;
                     std::string mat;
                     while(sub != "endsphere") {
@@ -178,7 +178,7 @@ RayTraicer::RayTraicer(std::string file) {
                         iss >> sub;
                         if(sub[0] == '#') continue;
                         if(sub == "coords") {
-                            double x, y, z;
+                            long double x, y, z;
                             iss >> x >> y >> z;
                             p = Vector(x, y, z);
                         }
@@ -203,7 +203,7 @@ RayTraicer::RayTraicer(std::string file) {
                         iss >> sub;
                         if(sub[0] == '#') continue;
                         if(sub == "vertex") {
-                            double x, y, z;
+                            long double x, y, z;
                             iss >> x >> y >> z;
                             if(!isAset && !isBset && !isCset) {
                                 a = Vector(x, y, z);
@@ -238,7 +238,7 @@ RayTraicer::RayTraicer(std::string file) {
                         iss >> sub;
                         if(sub[0] == '#') continue;
                         if(sub == "vertex") {
-                            double x, y, z;
+                            long double x, y, z;
                             iss >> x >> y >> z;
                             if(!isAset && !isBset && !isCset) {
                                 a = Vector(x, y, z);
@@ -283,6 +283,7 @@ RayTraicer::RayTraicer(std::string file) {
             }
         }
     }
+    scene_.setRoot();
 }
 
 void RayTraicer::addObject(SolidObject *obj) {
@@ -307,8 +308,8 @@ Vector RayTraicer::getIllumination(Ray ray, Vector point, SolidObject* obj) {
     Vector color = baseCol * LightSource::baseShining;
     for(int i = 0; i < scene_.getLightsNumber(); ++i) {
         LightSource lighter = scene_.getLight(i);
-        Ray light = Ray(point, lighter.getPosition());
         Vector toLight = lighter.getPosition() - point;
+        Ray light = Ray(point + toLight.normed() * EPS_MARGIN, lighter.getPosition());
         if(dotProduct(obj->getNorm(point), -toLight) * dotProduct(obj->getNorm(point), (point - ray.getBegin())) < 0) {
             continue;
         }
@@ -339,7 +340,7 @@ Vector RayTraicer::getIllumination(Ray ray, Vector point, SolidObject* obj) {
         color = color + (newColor * lighter.getIntence() * std::abs(dotProduct(obj->getNorm(point), point - lighter.getPosition())))
                 / ((point - lighter.getPosition()).sqrLength() * (point - lighter.getPosition()).length());
     }
-    return Vector(std::min(color.getX(), (double)1), std::min(color.getY(), (double)1), std::min(color.getZ(), (double)1));
+    return Vector(std::min(color.getX(), (long double)1), std::min(color.getY(), (long double)1), std::min(color.getZ(), (long double)1));
 }
 
 Vector RayTraicer::getColor(Ray ray, int depth) {
@@ -367,8 +368,8 @@ Vector RayTraicer::getColor(Ray ray, int depth) {
     //
     //
     rayDirection = point - ray.getBegin();
-    double cos = -dotProduct(rayDirection, norm) / rayDirection.length() / norm.length();
-    double coef;
+    long double cos = -dotProduct(rayDirection, norm) / rayDirection.length() / norm.length();
+    long double coef;
     Vector refractedColor;
     Ray refractedRay;
     if (baseMaterial.getRefraction() != 0) {
@@ -382,7 +383,7 @@ Vector RayTraicer::getColor(Ray ray, int depth) {
             coef = std::min(baseMaterial.getRefraction(), 1.0 / baseMaterial.getRefraction());
         }
 
-        double k = 1.0 - coef * coef * (1.0 - cos * cos);
+        long double k = 1.0 - coef * coef * (1.0 - cos * cos);
         if (k >= 0){
             Vector refractedDirection = (coef * rayDirection + (coef * cos - std::sqrt(k)) * norm).normed();
             refractedRay = Ray(point + refractedDirection.normed() * EPS_MARGIN, point + refractedDirection);
@@ -406,8 +407,8 @@ void RayTraicer::setColor(int x, int y, QImage &img, int aa) {
     }
     meanColor = meanColor / (aa * aa);
 
-    img.setPixelColor(x, y, QColor(std::min(meanColor.getX(), (double)1) * 255, std::min(meanColor.getY(), (double)1) * 255,
-                                       std::min(meanColor.getZ(), (double)1) * 255));
+    img.setPixelColor(x, y, QColor(std::min(meanColor.getX(), (long double)1) * 255, std::min(meanColor.getY(), (long double)1) * 255,
+                                       std::min(meanColor.getZ(), (long double)1) * 255));
 }
 
 void RayTraicer::traceRays(int start, QImage &img, int aa) {

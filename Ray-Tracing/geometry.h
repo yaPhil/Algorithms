@@ -11,50 +11,50 @@
 class Vector {
     friend Vector operator+ (Vector one, const Vector& two);
     friend Vector operator- (Vector left, const Vector& right);
-    friend Vector operator* (Vector left, const double c);
-    friend Vector operator* (const double c, Vector left);
+    friend Vector operator* (Vector left, const long double c);
+    friend Vector operator* (const long double c, Vector left);
     friend bool operator==(const Vector& lhs, const Vector& rhs);
-    friend double dotProduct(Vector a, Vector b);
+    friend long double dotProduct(Vector a, Vector b);
 public:
     Vector() {
         x_ = y_ = z_ = 0.0;
     }
-    Vector(double x, double y, double z) :
+    Vector(long double x, long double y, long double z) :
             x_(x), y_(y), z_(z) {}
     Vector(const Vector& c) : x_(c.x_), y_(c.y_), z_(c.z_) {}
 
-    double getX() { return x_; }
-    double getY() { return y_; }
-    double getZ() { return z_; }
+    long double getX() { return x_; }
+    long double getY() { return y_; }
+    long double getZ() { return z_; }
 
     Vector operator-();
 
-    double length() ;
-    double sqrLength();
+    long double length() ;
+    long double sqrLength();
     Vector normed();
     Vector crossProduct(Vector v);
-    double dotProduct(Vector v);
-    double orientVolume(Vector a, Vector b);
-    double absVolume(Vector a, Vector b);
+    long double dotProduct(Vector v);
+    long double orientVolume(Vector a, Vector b);
+    long double absVolume(Vector a, Vector b);
     int checkColinear(Vector a);
 private:
-    double x_;
-    double y_;
-    double z_;
+    long double x_;
+    long double y_;
+    long double z_;
 };
-double dotProduct(Vector a, Vector b);
-double absVolume(Vector a, Vector b, Vector c);
+long double dotProduct(Vector a, Vector b);
+long double absVolume(Vector a, Vector b, Vector c);
 int checkColinear(Vector a, Vector b);
 Vector operator+ (Vector one, const Vector& two);
 Vector operator- (Vector left, const Vector& right);
-Vector operator* (Vector left, const double c);
-Vector operator*(const double c, Vector left);
-Vector operator/ (Vector left, const double c);
-Vector operator/ (const double c, Vector rhs);
+Vector operator* (Vector left, const long double c);
+Vector operator*(const long double c, Vector left);
+Vector operator/ (Vector left, const long double c);
+Vector operator/ (const long double c, Vector rhs);
 bool operator==(const Vector& lhs, const Vector& rhs);
 bool operator!=(const Vector& lhs, const Vector& rhs);
 
-const double EPS = 0.000000001;
+const long double EPS = 0.000000001;
 
 class Ray {
 public:

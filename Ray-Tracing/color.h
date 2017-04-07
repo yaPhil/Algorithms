@@ -7,36 +7,36 @@
 class Color {
 public:
     Color() : red_(0), green_(0), blue_(0), alpha_(0), reflection_(0), refraction_(0) {}
-    Color(double r, double g, double b, double a, double refl, double refr) :
+    Color(long double r, long double g, long double b, long double a, long double refl, long double refr) :
             red_(r), green_(g), blue_(b), alpha_(a), reflection_(refl), refraction_(refr) {}
 
-    double getRed() const {
+    long double getRed() const {
         return red_;
     }
 
-    double getGreen() const {
+    long double getGreen() const {
         return green_;
     }
 
-    double getBlue() const {
+    long double getBlue() const {
         return blue_;
     }
 
-    double getAlpha() const {
+    long double getAlpha() const {
         return alpha_;
     }
-    double getReflection() const {
+    long double getReflection() const {
         return reflection_;
     }
-    double getRefraction() const {
+    long double getRefraction() const {
         return refraction_;
     }
 private:
-    double red_;
-    double green_;
-    double blue_;
-    double alpha_;
-    double reflection_;
-    double refraction_;
+    long double red_;
+    long double green_;
+    long double blue_;
+    long double alpha_;
+    long double reflection_;
+    long double refraction_;
 };
 #endif //RAY_TRACING_COLOR_H
